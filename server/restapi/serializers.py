@@ -1,7 +1,37 @@
 from rest_framework import serializers
-from .models import Label
+from rest_framework_simplejwt.tokens import RefreshToken
+from .models import CustomUser
 
-class LabelSerializers(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Label
-        fields = ['name']
+        model = CustomUser
+        fields = ['id', 'email', 'username', 'isAdmin', 'isStaff']
+
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        user = CustomUser.objects.create_user(**validated_data)
+        return user
+
+class UserLoginSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+    password = serializers.CharField(max_length=128, write_only=True)
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+
+    def validate(self, data):
+        email = data['email']
+        password = data['password']
+        user = CustomUser.objects.get(email=email)
+
+        if user.check_password(password):
+            refresh = RefreshToken.for_user(user)
+            data['access'] = str(refresh.access_token)
+            data['refresh'] = str(refresh)
+            return data
+        else:
+            raise serializers.ValidationError('Invalid login credentials')

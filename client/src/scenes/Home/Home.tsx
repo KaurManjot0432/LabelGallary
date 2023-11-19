@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from 'react';
 import config from '../../config';
 import { useSelector } from 'react-redux';
+import ImageList from '../ImageList/ImageList';
 
 interface Token {
   token: string;
@@ -98,6 +99,7 @@ const Home = () => {
       <input id="input" type="file" onChange={onInputChange} />
 
       <div>{message}</div>
+      <ImageList/>
     </div>
   );
 };

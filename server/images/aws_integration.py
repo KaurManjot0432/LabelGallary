@@ -33,3 +33,17 @@ def s3_generate_presigned_post(*, file_path: str, file_type: str):
     )
 
     return presigned_data
+
+def s3_generate_presigned_get(file: str):
+    print(file)
+    s3_client = s3_get_client()
+
+    presigned_data = s3_client.generate_presigned_url(
+        'get_object',
+        Params={
+            'Bucket': settings.AWS_S3_BUCKET_NAME, 
+            'Key': file
+        },
+        ExpiresIn = settings.AWS_PRESIGNED_EXPIRY
+    )
+    return presigned_data

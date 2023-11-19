@@ -11,25 +11,42 @@ class UserRegistrationView(APIView):
     permission_classes = (AllowAny, )
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        print("incoming req")
+        try:
+            serializer = self.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+
+            return Response({
+                'success': True,
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'An error occurred: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
-        return Response({'message': 'User successfully registered.'}, status=status.HTTP_201_CREATED)
 
 class UserLoginView(APIView):
     serializer_class = UserLoginSerializer
     permission_classes = (AllowAny, )
 
     def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        
-        return Response({
-            'message': 'User successfully logged in.',
-            'access': serializer.validated_data['access'],
-            'refresh': serializer.validated_data['refresh']
-        }, status=status.HTTP_200_OK)
+        try:
+            serializer = self.serializer_class(data=request.data)
+            serializer.is_valid(raise_exception=True)
+
+            return Response({
+                'success': True,
+                'access': serializer.validated_data['access'],
+                'refresh': serializer.validated_data['refresh'],
+                'user' : serializer.validated_data['user']
+            }, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': f'An error occurred: {str(e)}'
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class UserProfileView(APIView):
     serializer_class = UserSerializer

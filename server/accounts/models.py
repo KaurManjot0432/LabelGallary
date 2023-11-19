@@ -33,4 +33,5 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return self.email
+        return f"{self.id}${self.email}${'Admin' if self.isAdmin else 'Staff'}"
+

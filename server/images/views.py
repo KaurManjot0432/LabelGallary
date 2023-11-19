@@ -1,9 +1,8 @@
 from django.shortcuts import get_object_or_404
-
+from rest_framework import status
 from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
 from .models import File
 from .services import (
     FileDirectUploadService
@@ -43,3 +42,22 @@ class FileDirectUploadFinishApi(APIView):
 
         return Response({"id": file.id})
 
+
+class ImageListView(APIView):
+    def get(self, request, *args, **kwargs):
+        images = File.objects.all()
+        image_list = []
+
+        for image in images:
+            image_data = {
+                'id': str(image.id),
+                'file_name': image.file_name,
+                'file_type': image.file_type,
+                's3_url': f'https://labelgallary.s3.amazonaws.com/{image.file}',
+            }
+            image_list.append(image_data)
+
+        return Response({
+                'success': True,
+                'images': image_list,
+            }, status=status.HTTP_200_OK)

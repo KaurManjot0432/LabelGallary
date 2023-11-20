@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     images: [],
+    tags:[],
     token: null,
     user: null
 }
@@ -34,8 +35,11 @@ export const authSlice = createSlice({
                 return image._id !== action.payload.image._id
             })
             state.images = updatedImages;
-        }
+        },
+        setTags: (state, action) => {
+            state.tags = action.payload.tags;
+        },
     }
 })
-export const { setLogin, setLogout, setImage, setImages, setDelete } = authSlice.actions;
+export const { setLogin, setLogout, setImage, setImages, setDelete, setTags } = authSlice.actions;
 export default authSlice;

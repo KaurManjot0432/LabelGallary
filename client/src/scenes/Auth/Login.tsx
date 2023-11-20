@@ -62,6 +62,7 @@ function Login() {
           token: loggedInUser.access
         }
       ))
+      console.log(loggedInUser.access);
       navigate('/home')
     } else {
       console.log(loggedInUser.error);

@@ -145,24 +145,30 @@ class LabelListApi(APIView):
                 'error': str(e),
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-        
-class AddLabelToImageApi(APIView):
 
-    def post(self, request, pk):
-        """
-        Add a label to an existing image.
-        """
+class AddLabelToImageApi(APIView):
+    def patch(self, request, image_id, *args, **kwargs):
         try:
-            file = self.get_object()
-            label_name = request.data.get('label_name')
-            
+            image = get_object_or_404(File, id=image_id)
+            # Assuming the label name is passed in the request body
+            label_name = request.data.get('label')
+
             if not label_name:
-                return Response({'error': 'Label name is required.'}, status=status.HTTP_400_BAD_REQUEST)
+                return Response({
+                    'success': False,
+                    'error': 'Label name is required in the request body.',
+                }, status=status.HTTP_400_BAD_REQUEST)
 
             label, created = Label.objects.get_or_create(name=label_name)
-            file.labels.add(label)
-            file.save()
+            image.labels.add(label)
 
-            return Response({'success': True, 'message': f'Label "{label_name}" added to the image.'})
-        except File.DoesNotExist:
-            return Response({'error': 'Image does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({
+                'success': True,
+                'message': f'Label "{label_name}" added to the image.',
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

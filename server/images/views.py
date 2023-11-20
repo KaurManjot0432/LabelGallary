@@ -75,7 +75,22 @@ class FileDirectUploadFinishApi(APIView):
 class ImageListApi(APIView):
     def get(self, request, *args, **kwargs):
         try:
-            images = File.objects.all()
+            label_name = request.query_params.get('label', 'all')
+
+             # Get images based on the label or all images if label is not specified
+            if label_name == 'all':
+                images = File.objects.all()
+            else:
+                labels = Label.objects.filter(name=label_name)
+                if not labels.exists():
+                    return Response({
+                        'success': False,
+                        'error': f'Label with name {label_name} not found.',
+                    }, status=status.HTTP_404_NOT_FOUND)
+
+                # Fetch images associated with the labels in the queryset
+                images = File.objects.filter(labels__in=labels)
+
             image_list = []
 
             for image in images:

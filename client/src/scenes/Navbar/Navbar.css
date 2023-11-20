@@ -1,0 +1,34 @@
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.navbar h2 {
+    margin: 0;
+}
+
+.navbar h4 {
+    margin: 0;
+    font-size: 1rem;
+    margin-left: 5px;
+}
+
+.dropdown-toggle {
+    background-color: #343a40;
+    color: #ffffff;
+    border: none;
+}
+
+.dropdown-item {
+    color: #000000;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+}

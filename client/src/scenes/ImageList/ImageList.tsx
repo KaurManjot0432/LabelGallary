@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import config from '../../config';
 import { useSelector } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Pagination from '@material-ui/lab/Pagination';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { useInView } from 'react-intersection-observer';
 
 interface Token {
   token: string;
@@ -26,17 +27,17 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ImageList: React.FC = () => {
-
   const itemsPerPage = 2;
   const classes = useStyles();
-
   const token = useSelector((state: Token) => state?.token);
   const [images, setImages] = useState<Image[]>([]);
   const [imagesTotalCount, setImagesTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [ref, inView] = useInView({
+    triggerOnce: true,
+  });
 
   const fetchImages = async () => {
-    console.log("fetching images")
     try {
       const url = `${config.apiUrl}/images/list-images?p=${currentPage}&page_size=${itemsPerPage}`;
       const response = await fetch(url, {
@@ -54,22 +55,30 @@ const ImageList: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    fetchImages()
-  }, [currentPage, token]);
-
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
     setCurrentPage(page);
-    fetchImages()
+    fetchImages();
   };
+
+  useEffect(() => {
+    fetchImages();
+  }, [currentPage, token, inView]);
 
   return (
     <div className={classes.root}>
-      <Grid container spacing={3} justifyContent="center">
-        {images && images.map((image) => (
+      <Grid container spacing={3} justifyContent="space-around">
+        {images.map((image, index) => (
           <Grid item xs={6} key={image.id}>
-            <img src={image.presigned_url} alt={image.file_name} style={{ width: '100%', height: 'auto' }} />
-            <p>{image.file_name}</p>
+            <img
+              ref={index === images.length - 1 ? ref : undefined}
+              src={inView ? image.presigned_url : undefined}
+              alt={image.file_name}
+              style={{ width: '80%', height: '80%', margin: '20px' }}
+            />
+            <p
+              style={{ fontSize: '16px', fontWeight: 'bold', color: '#333', marginLeft: '30px' }}>
+              {image.file_name}
+            </p>
           </Grid>
         ))}
       </Grid>

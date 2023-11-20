@@ -53,7 +53,7 @@ class ImageListView(APIView):
             for image in images:
                 image_data = {
                     'id': str(image.id),
-                    'file_name': image.file_name,
+                    'file_name': image.original_file_name,
                     'file_type': image.file_type,
                     'presigned_url': s3_generate_presigned_get(str(image.file)),
                 }

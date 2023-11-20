@@ -2,23 +2,30 @@
 
 ## Overview
 
-Label Gallary is an image management app where admins can upload images and users will be able to access all the images and can assign different labels to the images.
+Label Gallary is an image management app where admins can upload images and users will be able to access all the images and can assign different labels to the images. 
+
 
 ## Functional Requirements
 
-LabelGallary meets a range of functional requirements to ensure a seamless user experience:
+LabelGallary meets a range of functional requirements:
 
-- **Organize Data**: Organize users and images with their metadata
-- **Data Integrity**: Ensure all responses are accurately stored and correctly linked with specific users
+- **User Authentication**: Authentication ensures secure access to user-specific features.
+- **Image Management**: managing images by storing directly in S3, reducing server load
+- **Labeling and Tagging**: Users can assign labels or tags to images, Labels help in categorizing and searching for images.
+- **Gallery Display**: Images are displayed in a grid or carousel format.
+- **Pagination and Lazy Loading**:Implemented pagination in backend and lazy loading in frontend to optimize the performance
+- **Search and Filter**: Users can search for images based on labels, tags, or other metadata.
+- **Role based Access**: The system supports different user roles, such as "Admin," "User," etc.
 
 ## Non-Functional Requirements
 
 In addition to its functional features, Label Gallary prioritizes non-functional requirements for reliability, security, and performance:
 
-- **Safe and Secure Data**: Protect data with accuracy and security.
+- **Performance**: The application load images quickly using presigned urls of S3
 - **Reliability**: Ensure the system functions well and recovers gracefully from issues.
-- **Fast Performance**: Maintain fast processing times, eliminating user wait times.
-- **Scalability**: Design the system to accommodate more users and growing data needs.
+- **Usability**: The user interface is intuitive and easy to navigate
+- **Scalability**: Scalability ensures the application's performance remains stable under increased load.
+
 
 ## Technology Stack
 #### Backend
@@ -44,35 +51,25 @@ Here are some screenshots showcasing the platform:
 
 Follow the steps below to run the project.
 
-1. Clone the Repository:https://github.com/KaurManjot0432/TaskManager.git
+System Requirements - Node, MongoDB, Python
+
+1. unzip the file
+
+
+2. Run the backend server inside server folder using the command line simply using,
 
 ```bash
-git clone https://github.com/KaurManjot0432/TaskManager.git
+python manage.py runserver
 ```
 
-2. Install the node modules inside backend folder
-
-```bash
-npm install
-```
-
-3. Install the node modules at root directory
-
-```bash
-npm install
-```
-4. Don't forget to create a .env file and configure your mysql database configuration variables
-
-5. Run the backend server inside backend folder using the command line simply using,
+3. Run the frontend server at root directory using the command line simply using,
 
 ```bash
 npm start
 ```
-
-6. Run the frontend server at root directory using the command line simply using,
-
-```bash
-npm start
+you can create superuser using following command - 
+```
+python manage.py createsuperuser
 ```
 
 Run the application on http://localhost:3000/

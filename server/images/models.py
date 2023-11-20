@@ -6,6 +6,8 @@ def file_generate_upload_path(instance, filename):
 	# Both filename and instance.file_name should have the same values
     return f"files/{instance.file_name}"
 
+class Label(models.Model):
+    name = models.CharField(max_length=255, unique=True)
 
 class File(models.Model):
     file = models.FileField(
@@ -21,6 +23,8 @@ class File(models.Model):
 
     upload_finished_at = models.DateTimeField(blank=True, null=True)
 
+    labels = models.ManyToManyField(Label, related_name='files')
+
     @property
     def is_valid(self):
         """
@@ -31,3 +35,11 @@ class File(models.Model):
     @property
     def url(self):
         return self.file.url
+    
+    @property
+    def label_names(self):
+        """
+        Returns a list of label names associated with the file.
+        """
+        return [label.name for label in self.labels.all()]
+    

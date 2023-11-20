@@ -4,47 +4,75 @@ from rest_framework import serializers
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .aws_integration import s3_generate_presigned_get
-from .models import File
+from .models import File, Label
+from django.contrib.auth.models import AnonymousUser
 from .services import (
     FileDirectUploadService
 )
 from .pagination import CustomPagination
+from .serializers import (
+    LabelSerializer, 
+    FileDirectUploadStartSerializer, 
+    FileDirectUploadFinishSerializer
+)
 
 
 class FileDirectUploadStartApi(APIView):
-    class InputSerializer(serializers.Serializer):
-        file_name = serializers.CharField()
-        file_type = serializers.CharField()
 
     def post(self, request, *args, **kwargs):
-        serializer = self.InputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            if request.user.is_anonymous:
+                return Response({
+                    'success': False,
+                    'error': 'Authentication failed',
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            user_fields = str(request.user).split('$')
+            user_role = user_fields[2]
 
-        service = FileDirectUploadService(request.user)
-        presigned_data = service.start(**serializer.validated_data)
+            if(user_role != 'Admin'):
+                return Response({
+                    'success': False,
+                    'error': 'Authentication failed',
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            serializer = FileDirectUploadStartSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
 
-        return Response(data=presigned_data)
+            service = FileDirectUploadService(request.user)
+            presigned_data = service.start(**serializer.validated_data)
+
+            return Response(data=presigned_data)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class FileDirectUploadFinishApi(APIView):
-    class InputSerializer(serializers.Serializer):
-        file_id = serializers.CharField()
 
     def post(self, request):
-        serializer = self.InputSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer = FileDirectUploadFinishSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
 
-        file_id = serializer.validated_data["file_id"]
+            file_id = serializer.validated_data["file_id"]
 
-        file = get_object_or_404(File, id=file_id)
+            file = get_object_or_404(File, id=file_id)
 
-        service = FileDirectUploadService(request.user)
-        service.finish(file=file)
+            service = FileDirectUploadService(request.user)
+            service.finish(file=file)
 
-        return Response({"id": file.id})
+            return Response({"id": file.id})
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-class ImageListView(APIView):
+class ImageListApi(APIView):
     def get(self, request, *args, **kwargs):
         try:
             images = File.objects.all()
@@ -69,3 +97,72 @@ class ImageListView(APIView):
                 'error': str(e),
             }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+
+class LabelListApi(APIView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            labels = Label.objects.all()
+            labels_data = LabelSerializer(labels, many=True).data
+            return Response({
+                'success' : True,
+                'labels' : labels_data,
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            if request.user.is_anonymous:
+                return Response({
+                    'success': False,
+                    'error': 'Authentication failed',
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            user_fields = str(request.user).split('$')
+            user_role = user_fields[2]
+
+            if(user_role != 'Admin'):
+                return Response({
+                    'success': False,
+                    'error': 'Authentication failed',
+                }, status=status.HTTP_401_UNAUTHORIZED)
+            
+            serializer = LabelSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response({
+                'success': True,
+                'data': serializer.data,
+            }, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({
+                'success': False,
+                'error': str(e),
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+        
+class AddLabelToImageApi(APIView):
+
+    def post(self, request, pk):
+        """
+        Add a label to an existing image.
+        """
+        try:
+            file = self.get_object()
+            label_name = request.data.get('label_name')
+            
+            if not label_name:
+                return Response({'error': 'Label name is required.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            label, created = Label.objects.get_or_create(name=label_name)
+            file.labels.add(label)
+            file.save()
+
+            return Response({'success': True, 'message': f'Label "{label_name}" added to the image.'})
+        except File.DoesNotExist:
+            return Response({'error': 'Image does not exist.'}, status=status.HTTP_404_NOT_FOUND)

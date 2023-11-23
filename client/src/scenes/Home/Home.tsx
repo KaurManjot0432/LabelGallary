@@ -1,11 +1,11 @@
 import Navbar from "../Navbar/Navbar";
-import ImageList from "../ImageList/ImageList";
+import ImagesList from "../Images/ImagesList";
 
 const Home = () => {
   return (
     <>
     <Navbar/>
-    <ImageList/>
+    <ImagesList/>
     </>
   );
 };

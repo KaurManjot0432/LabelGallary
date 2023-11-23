@@ -1,12 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import config from '../../config';
 import { useSelector } from 'react-redux';
 import { setTags, setImages } from '../../state';
 import { useDispatch } from 'react-redux';
-import Grid from '@material-ui/core/Grid';
 import Pagination from '@material-ui/lab/Pagination';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import ImageItem from './ImageItem';
+import Box from '@mui/material/Box';
+import ImageList from '@mui/material/ImageList';
+import ImagesListItem from './ImagesListItem';
 
 interface Token {
   token: string;
@@ -29,20 +29,12 @@ interface Image {
   file_name: string;
   file_type: string;
   presigned_url: string;
+  labels: string[];
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      flexGrow: 1,
-      marginTop: theme.spacing(2),
-    },
-  })
-);
 
-const ImageList: React.FC = () => {
+const ImagesList: React.FC = () => {
   const itemsPerPage = 8;
-  const classes = useStyles();
   const dispatch = useDispatch();
   const token = useSelector((state: Token) => state?.token);
   const tags = useSelector((state: Tags) => state?.tags);
@@ -51,7 +43,6 @@ const ImageList: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<number>(1);
 
   const fetchLabels = async () => {
-    console.log("fetchLabels called");
     try {
       const response = await fetch(`${config.apiUrl}/images/label`, {
         method: "GET",
@@ -67,7 +58,6 @@ const ImageList: React.FC = () => {
     }
   }
   const fetchImages = async () => {
-    console.log("fetchImges called");
     try {
       const url = `${config.apiUrl}/images/list-images?p=${currentPage}&page_size=${itemsPerPage}`;
       const response = await fetch(url, {
@@ -97,12 +87,12 @@ const ImageList: React.FC = () => {
   }, []);
 
   return (
-    <div className={classes.root}>
-      <Grid container spacing={3} justifyContent="space-around">
-        {images && images.map((image, index) => (
-          <ImageItem image={image} index={index} />
+    <Box sx={{ width: 1, p: 2, overflowY: 'scroll' }}>
+      <ImageList variant="masonry" cols={3} gap={8}>
+        {images && images.map((image) => (
+          <ImagesListItem image={image} />
         ))}
-      </Grid>
+      </ImageList>
       <Pagination
         count={Math.ceil(imagesTotalCount / itemsPerPage)}
         page={currentPage}
@@ -110,8 +100,8 @@ const ImageList: React.FC = () => {
         color="primary"
         style={{ marginTop: '16px' }}
       />
-    </div>
+    </Box>
   );
 };
 
-export default ImageList;
+export default ImagesList;

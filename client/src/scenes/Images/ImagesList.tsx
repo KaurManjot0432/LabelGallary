@@ -34,7 +34,7 @@ interface Image {
 
 
 const ImagesList: React.FC = () => {
-  const itemsPerPage = 8;
+  const itemsPerPage = 2;
   const dispatch = useDispatch();
   const token = useSelector((state: Token) => state?.token);
   const tags = useSelector((state: Tags) => state?.tags);

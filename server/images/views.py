@@ -180,10 +180,12 @@ class AddLabelToImageApi(APIView):
 
             label, created = Label.objects.get_or_create(name=label_name)
             image.labels.add(label)
+            # Fetch the label names associated with the image
+            label_names = [label.name for label in image.labels.all()]
 
             return Response({
                 'success': True,
-                'message': f'Label "{label_name}" added to the image.',
+                'labels': label_names,
             }, status=status.HTTP_200_OK)
 
         except Exception as e:

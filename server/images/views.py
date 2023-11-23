@@ -94,11 +94,15 @@ class ImageListApi(APIView):
             image_list = []
 
             for image in images:
+                # Fetch the label names associated with the image
+                label_names = [label.name for label in image.labels.all()]
+
                 image_data = {
                     'id': str(image.id),
                     'file_name': image.original_file_name,
                     'file_type': image.file_type,
                     'presigned_url': s3_generate_presigned_get(str(image.file)),
+                    'labels': label_names,  # Add the list of label names to the image_data
                 }
                 image_list.append(image_data)
 

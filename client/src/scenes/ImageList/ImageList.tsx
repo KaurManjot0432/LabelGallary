@@ -1,13 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import config from '../../config';
 import { useSelector } from 'react-redux';
-import { setTags } from '../../state';
+import { setTags, setImages } from '../../state';
 import { useDispatch } from 'react-redux';
 import Grid from '@material-ui/core/Grid';
 import Pagination from '@material-ui/lab/Pagination';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import { useInView } from 'react-intersection-observer';
-import Dropdown from './Dropdown';
+import ImageItem from './ImageItem';
 
 interface Token {
   token: string;
@@ -20,6 +19,11 @@ interface Label {
   id: number;
   name: string;
 }
+
+interface Images {
+  images: Image[];
+}
+
 interface Image {
   id: string;
   file_name: string;
@@ -37,32 +41,33 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ImageList: React.FC = () => {
-  const itemsPerPage = 2;
+  const itemsPerPage = 8;
   const classes = useStyles();
   const dispatch = useDispatch();
   const token = useSelector((state: Token) => state?.token);
-  const tags = useSelector((state:Tags) => state?.tags);
-  const [images, setImages] = useState<Image[]>([]);
+  const tags = useSelector((state: Tags) => state?.tags);
+  const images = useSelector((state: Images) => state?.images);
   const [imagesTotalCount, setImagesTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [ref, inView] = useInView({
-    triggerOnce: true,
-  });
+
   const fetchLabels = async () => {
-    const response = await fetch(`${config.apiUrl}/images/label`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const parsedResponse= await response.json();
-    console.log(parsedResponse);
-    console.log(parsedResponse.labels);
-    dispatch(setTags({tags : parsedResponse.labels}));
-    console.log("tags --")
-    console.log(tags);
+    console.log("fetchLabels called");
+    try {
+      const response = await fetch(`${config.apiUrl}/images/label`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const parsedResponse = await response.json();
+      dispatch(setTags({ tags: parsedResponse.labels }));
+      console.log("tags = ", tags);
+    } catch (error) {
+      console.error('Error fetching labels:', error);
+    }
   }
   const fetchImages = async () => {
+    console.log("fetchImges called");
     try {
       const url = `${config.apiUrl}/images/list-images?p=${currentPage}&page_size=${itemsPerPage}`;
       const response = await fetch(url, {
@@ -72,9 +77,10 @@ const ImageList: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      const data = await response.json();
-      setImages(data.results);
-      setImagesTotalCount(data.count);
+      const parsedResponse = await response.json();
+      dispatch(setImages({ images: parsedResponse.results }));
+      console.log("images = ", images);
+      setImagesTotalCount(parsedResponse.count);
     } catch (error) {
       console.error('Error fetching images:', error);
     }
@@ -88,56 +94,13 @@ const ImageList: React.FC = () => {
   useEffect(() => {
     fetchLabels();
     fetchImages();
-  }, [currentPage, token, inView]);
-
-  const handleLabelSelect = async (
-    label: string,
-    imageId: string
-  ) => {
-    try {
-      const response = await fetch(`${config.apiUrl}/images/label-image/${imageId}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          label
-        }),
-      });
-
-      if (response.ok) {
-        console.log(response);
-      } else {
-        console.log('got error');
-      }
-    } catch (error) {
-      console.error('Error assigning label:', error);
-    }
-  };
+  }, []);
 
   return (
     <div className={classes.root}>
       <Grid container spacing={3} justifyContent="space-around">
-        {images.map((image, index) => (
-          <Grid item xs={6} key={image.id}>
-            <img
-              ref={index === images.length - 1 ? ref : undefined}
-              src={inView ? image.presigned_url : undefined}
-              alt={image.file_name}
-              style={{ width: '80%', height: '80%', margin: '20px' }}
-            />
-            <Dropdown
-              labels={tags}
-              onSelect={(labelName) =>
-                handleLabelSelect(labelName, image.id)
-              }
-            />
-            <p
-              style={{ fontSize: '16px', fontWeight: 'bold', color: '#333', marginLeft: '30px' }}>
-              {image.file_name}
-            </p>
-          </Grid>
+        {images && images.map((image, index) => (
+          <ImageItem image={image} index={index} />
         ))}
       </Grid>
       <Pagination

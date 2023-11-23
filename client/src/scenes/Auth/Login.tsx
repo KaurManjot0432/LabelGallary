@@ -54,7 +54,7 @@ function Login() {
       body: JSON.stringify(values),
     });
     const loggedInUser = await loginUserData.json();
-    console.log(loggedInUser);
+    console.log("Logged in user = " , loggedInUser);
     if (loggedInUser.success) {
       dispatch(setLogin(
         {
@@ -62,7 +62,6 @@ function Login() {
           token: loggedInUser.access
         }
       ))
-      console.log(loggedInUser.access);
       navigate('/home')
     } else {
       console.log(loggedInUser.error);

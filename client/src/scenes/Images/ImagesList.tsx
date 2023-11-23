@@ -24,6 +24,10 @@ interface Images {
   images: Image[];
 }
 
+interface SelectedLabel {
+  selectedLabel: string;
+}
+
 interface Image {
   id: string;
   file_name: string;
@@ -34,11 +38,12 @@ interface Image {
 
 
 const ImagesList: React.FC = () => {
-  const itemsPerPage = 2;
+  const itemsPerPage = 8;
   const dispatch = useDispatch();
   const token = useSelector((state: Token) => state?.token);
   const tags = useSelector((state: Tags) => state?.tags);
   const images = useSelector((state: Images) => state?.images);
+  const selectedLabel = useSelector((state: SelectedLabel) => state.selectedLabel);
   const [imagesTotalCount, setImagesTotalCount] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
 
@@ -59,7 +64,7 @@ const ImagesList: React.FC = () => {
   }
   const fetchImages = async () => {
     try {
-      const url = `${config.apiUrl}/images/list-images?p=${currentPage}&page_size=${itemsPerPage}`;
+      const url = `${config.apiUrl}/images/list-images?p=${currentPage}&page_size=${itemsPerPage}&label=${selectedLabel}`;
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -84,7 +89,7 @@ const ImagesList: React.FC = () => {
   useEffect(() => {
     fetchLabels();
     fetchImages();
-  }, []);
+  }, [selectedLabel, currentPage]);
 
   return (
     <Box sx={{ width: 1, p: 2, overflowY: 'scroll' }}>

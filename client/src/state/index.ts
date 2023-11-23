@@ -3,7 +3,8 @@ const initialState = {
     images: [],
     tags:[],
     token: null,
-    user: null
+    user: null,
+    selectedLabel: "all",
 }
 export const authSlice = createSlice({
     name: 'auth',
@@ -39,7 +40,10 @@ export const authSlice = createSlice({
         setTags: (state, action) => {
             state.tags = action.payload.tags;
         },
+        setSelectedLabel: (state, action) => {
+            state.selectedLabel = action.payload;
+          },
     }
 })
-export const { setLogin, setLogout, setImage, setImages, setDelete, setTags } = authSlice.actions;
+export const { setLogin, setLogout, setImage, setImages, setDelete, setTags, setSelectedLabel } = authSlice.actions;
 export default authSlice;

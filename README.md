@@ -53,27 +53,32 @@ Follow the steps below to run the project.
 
 System Requirements - Node, MongoDB, Python
 
-1. unzip the file
-
-
-2. Run the backend server inside server folder using the command line simply using,
+1. Clone the Repository:
 
 ```bash
-python manage.py runserver
+git clone https://github.com/KaurManjot0432/LabelGallary
+cd LabelGallary
 ```
 
-3. Run the frontend server at root directory using the command line simply using,
+
+2. Configure Environment Variables:
+
+- Create a .env file in the root directory of the project.
+- Add the necessary environment variables for S3 details configuration
+
+3. Build and Run Docker Compose:
 
 ```bash
-npm start
+docker-compose up --build
 ```
-you can create superuser using following command - 
+- This command will build the Docker images and start the containers defined in the docker-compose.yml file.
+
+4. Access the Application:
+- Once the Docker containers are up and running, you can access the Label Gallary application in your browser at http://localhost:3000.
+
+5. Stop the Containers:
+- To stop the containers, use the following command in the terminal:
+
+```bash
+docker-compose down
 ```
-python manage.py createsuperuser
-```
-
-Run the application on http://localhost:3000/
-
-
-
-**Happy task management with Label Gallary!**

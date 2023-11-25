@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  server:
+    build: ./server
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - mongodb
+    links:
+      - mongodb
+    networks:
+      - label-gallary-nw
+
+  mongodb:
+    restart: always
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    networks:
+      - label-gallary-nw
+
+  client:
+    build: ./client
+    command: ["npm", "start"]
+    volumes:
+      - ./client:/LabelGallary/client
+      - node-modules:/LabelGallary/client/node_modules
+    ports:
+      - "3000:3000"
+
+volumes:
+  node-modules:
+
+networks:
+  label-gallary-nw:
+    driver: bridge

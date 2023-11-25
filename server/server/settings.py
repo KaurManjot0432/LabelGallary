@@ -93,9 +93,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
+        'ENFORCE_SCHEMA': True,
         'NAME': 'LabelGallary',
-        'HOST': '127.0.0.1',
-        'PORT': 27017
+        'CLIENT' : {
+            'host': 'mongodb',
+            'port': 27017,
+        }
     }
 }
 

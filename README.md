@@ -49,10 +49,6 @@ Here are some screenshots showcasing the platform:
 
 ## Getting Started
 
-Follow the steps below to run the project.
-
-System Requirements - Node, MongoDB, Python
-
 1. Clone the Repository:
 
 ```bash
@@ -63,7 +59,7 @@ cd LabelGallary
 
 2. Configure Environment Variables:
 
-- Create a .env file in the root directory of the project.
+- Create a .env file in the server directory of the project.
 - Add the necessary environment variables for S3 details configuration
 
 3. Build and Run Docker Compose:

@@ -81,15 +81,8 @@ class ImageListApi(APIView):
             if label_name == 'all':
                 images = File.objects.all()
             else:
-                labels = Label.objects.filter(name=label_name)
-                if not labels.exists():
-                    return Response({
-                        'success': False,
-                        'error': f'Label with name {label_name} not found.',
-                    }, status=status.HTTP_404_NOT_FOUND)
-
-                # Fetch images associated with the labels in the queryset
-                images = File.objects.filter(labels__in=labels)
+                # Fetch images associated with the specified label name
+                images = File.objects.filter(labels__name=label_name)
 
             image_list = []
 

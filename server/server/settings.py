@@ -29,7 +29,8 @@ SECRET_KEY = 'django-insecure-k9dw-q187#v#wanud3k&i9t9v22kjdc^wu1!-1*zfdp^004$b(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0',
+                 '127.0.0.1']
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",  
@@ -93,11 +94,10 @@ WSGI_APPLICATION = 'server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'djongo',
-        'ENFORCE_SCHEMA': True,
         'NAME': 'LabelGallary',
         'CLIENT' : {
-            'host': 'mongodb',
-            'port': 27017,
+            'host':'mongodb://127.0.0.1:27017',
+            'port':27017,
         }
     }
 }

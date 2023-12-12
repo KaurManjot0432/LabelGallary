@@ -50,6 +50,7 @@ const Admin = () => {
 
   const directUploadStart = async ({ file_name, file_type, file }: DirectUploadData) => {
     setRegisteredmsg("Uploading file...")
+    setfile(null);
     const values = { file_name, file_type };
     try {
       // Make a request to get the presigned URL
@@ -64,13 +65,13 @@ const Admin = () => {
 
       if (signedUrlResponse.ok) {
         const signedUrlData = await signedUrlResponse.json();
-        try{
+        try {
           await uploadFileToS3(file, signedUrlData.url, signedUrlData.fields);
           await directUploadFinish({ file_id: signedUrlData.id });
-        } catch(err) {
+          setRegisteredmsg('File upload completed!');
+        } catch (err) {
           setErrormsg('Error uploading image');
         }
-        setRegisteredmsg('File upload completed!');
       } else {
         setErrormsg('Error obtaining presigned URL');
       }
@@ -80,21 +81,25 @@ const Admin = () => {
   };
 
   const uploadFileToS3 = async (file: File, url: string, fields: any) => {
-    const formData = new FormData();
+    try {
+      const formData = new FormData();
 
-    // Append additional fields to the FormData
-    Object.keys(fields).forEach((key) => {
-      formData.append(key, fields[key]);
-    });
+      // Append additional fields to the FormData
+      Object.keys(fields).forEach((key) => {
+        formData.append(key, fields[key]);
+      });
 
-    // Append the file to the FormData
-    formData.append('file', file);
+      // Append the file to the FormData
+      formData.append('file', file);
 
-    // Use the presigned URL to upload the file to S3
-    await fetch(url, {
-      method: 'POST',
-      body: formData,
-    });
+      // Use the presigned URL to upload the file to S3
+      await fetch(url, {
+        method: 'POST',
+        body: formData,
+      });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const directUploadFinish = async ({ file_id }: { file_id: number }) => {

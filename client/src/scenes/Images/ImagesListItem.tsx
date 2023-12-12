@@ -51,6 +51,7 @@ const ImagesListItem: React.FC<ImageItemProps> = ({ image }) => {
         label: string,
         imageId: string
     ) => {
+        setAnchorEl(null);
         try {
             const response = await fetch(`${config.apiUrl}/images/label-image/${imageId}`, {
                 method: 'PATCH',
@@ -78,30 +79,38 @@ const ImagesListItem: React.FC<ImageItemProps> = ({ image }) => {
                     alt={image.file_name}
                 />
                 <ImageListItemBar
-                    position="bottom"
+                    sx={{
+                        background:
+                            'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, ' +
+                            'rgba(0,0,0,0.3) 70%, rgba(0,0,0,0) 100%)',
+                    }}
+                    position="top"
                     actionIcon={
                         <Tooltip title="Add a new Label">
                             <IconButton
                                 onClick={handleClick}
                                 size="small"
-                                sx={{ ml: 2 }}
+                                sx={{ color: 'white' }}
                                 aria-controls={open ? 'account-menu' : undefined}
                                 aria-haspopup="true"
                                 aria-expanded={open ? 'true' : undefined}
                             >
-                                <Avatar sx={{ width: 28, height: 28 }}><AddIcon color="success" /></Avatar>
+                                <Avatar sx={{ width: 28, height: 28, margin: 1 }}><AddIcon /></Avatar>
                             </IconButton>
                         </Tooltip>
                     }
-                    actionPosition="left"
-                    subtitle={
-                        <Stack direction="row" spacing={1}>
-                            {imageLabels && imageLabels.map((label) => (
-                                <Chip label={label} color="success" size="small" key={label}></Chip>
-                            ))}
-                        </Stack>}
+                    actionPosition="right"
                 >
                 </ImageListItemBar>
+                <ImageListItemBar
+                    position="below"
+                    title={
+                        <Stack direction="row" spacing={1}>
+                            {imageLabels && imageLabels.map((label) => (
+                                <Chip label={label} size="small" key={label}></Chip>
+                            ))}
+                        </Stack>}
+                />
             </ImageListItem>
             <Menu
                 anchorEl={anchorEl}

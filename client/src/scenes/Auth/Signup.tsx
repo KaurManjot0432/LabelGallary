@@ -122,7 +122,9 @@ function Signup() {
                                 label='password'
                                 error={Boolean(touched.password) && Boolean(errors.password)}
                                 variant="outlined" size="small"
-                                helperText={touched.password && errors.password} id='password' type='text'
+                                helperText={touched.password && errors.password}
+                                id='password'
+                                type='password'
                                 sx={{ width: '100%', padding: "7px" }} />
 
                             <MDBBtn type='submit' className="mb-4 w-100">Sign up</MDBBtn>

@@ -39,7 +39,7 @@ function Login() {
   };
 
   useEffect(() => {
-    if(errormsg) {
+    if (errormsg) {
       displayErrorFor5Seconds();
     }
   }, [errormsg]);
@@ -54,7 +54,7 @@ function Login() {
       body: JSON.stringify(values),
     });
     const loggedInUser = await loginUserData.json();
-    console.log("Logged in user = " , loggedInUser);
+    console.log("Logged in user = ", loggedInUser);
     if (loggedInUser.success) {
       dispatch(setLogin(
         {
@@ -109,7 +109,9 @@ function Login() {
                 label='Password'
                 error={Boolean(touched.password) && Boolean(errors.password)}
                 variant="outlined" size="small"
-                helperText={touched.password && errors.password} id='password' type='text'
+                helperText={touched.password && errors.password}
+                id='password'
+                type='password'
                 sx={{ width: '100%', padding: "7px" }} />
               <MDBBtn type="submit" className="mb-4 w-100">Sign in</MDBBtn>
               {showError && <p style={{ color: '#8B0000', border: '8px' }}>{errormsg}</p>}

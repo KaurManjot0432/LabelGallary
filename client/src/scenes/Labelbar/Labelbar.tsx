@@ -1,6 +1,6 @@
 import React from 'react';
-import Chip from '@mui/material/Chip';
-import Stack from '@mui/material/Stack';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab'; import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSelectedLabel } from '../../state';
 
@@ -16,22 +16,29 @@ interface Label {
 const LabelBar: React.FC = () => {
     const dispatch = useDispatch();
     const tags = useSelector((state: Tags) => state?.tags);
+    const [value, setValue] = React.useState("");
 
-    const handleLabelClick = (label: string) => {
-        dispatch(setSelectedLabel(label));
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        setValue(newValue);
+        console.log(`Selected Label: ${newValue}`);
+        dispatch(setSelectedLabel(newValue));
     };
-
     return (
-        <Stack
-            direction="row"
-            justifyContent="center"
-            alignItems="center"
-            spacing={2}
-        >
-            {tags && tags.map((tag) => (
-                <Chip key={tag.id} label={tag.name} color="success" onClick={() => handleLabelClick(tag.name)} />
-            ))}
-        </Stack>
+        <>
+            <Box sx={{ maxWidth: { xs: 820, sm: 1280 }, bgcolor: 'background.paper' }}>
+                <Tabs
+                    value={value}
+                    onChange={handleChange}
+                    variant="scrollable"
+                    scrollButtons="auto"
+                    aria-label="scrollable auto tabs example"
+                >
+                    {tags && tags.map((tag) => (
+                        <Tab key={tag.id} label={tag.name} value={tag.name} />
+                    ))}
+                </Tabs>
+            </Box>
+        </>
     );
 };
 

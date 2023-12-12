@@ -19,7 +19,6 @@ interface Label {
     name: string;
 }
 
-
 interface ImageItemProps {
     image: {
         id: string;
@@ -28,10 +27,10 @@ interface ImageItemProps {
         presigned_url: string;
         labels: string[];
     };
+    onLabelAddition: (imageId: string, addedLabel: string) => void;
 }
 
-
-const ImagesListItem: React.FC<ImageItemProps> = ({ image }) => {
+const ImagesListItem: React.FC<ImageItemProps> = ({ image, onLabelAddition }) => {
     const [ref, inView] = useInView({
         triggerOnce: true,
     });
@@ -63,8 +62,9 @@ const ImagesListItem: React.FC<ImageItemProps> = ({ image }) => {
                     label
                 }),
             });
-            const parsedResponse = await response.json();
-            setImagelables(parsedResponse.labels);
+            setImagelables((prevLabels) => [...prevLabels, label]);
+            // Call the callback function to update labels in the parent component
+            onLabelAddition(imageId, label);
             console.log(imageLabels);
         } catch (error) {
             console.error('Error assigning label:', error);
@@ -106,7 +106,7 @@ const ImagesListItem: React.FC<ImageItemProps> = ({ image }) => {
                     position="below"
                     title={
                         <Stack direction="row" spacing={1}>
-                            {imageLabels && imageLabels.map((label) => (
+                            {image.labels && image.labels.map((label) => (
                                 <Chip label={label} size="small" key={label}></Chip>
                             ))}
                         </Stack>}

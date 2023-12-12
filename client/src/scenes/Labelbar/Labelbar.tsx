@@ -2,7 +2,7 @@ import React from 'react';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab'; import Box from '@mui/material/Box';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSelectedLabel } from '../../state';
+import { setSelectedLabel, setPageNumber } from '../../state';
 
 interface Tags {
     tags: Label[];
@@ -22,6 +22,7 @@ const LabelBar: React.FC = () => {
         setValue(newValue);
         console.log(`Selected Label: ${newValue}`);
         dispatch(setSelectedLabel(newValue));
+        dispatch(setPageNumber(1));
     };
     return (
         <>

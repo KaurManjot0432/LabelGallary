@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
     images: [],
-    tags:[],
+    tags: [],
     token: null,
     user: null,
     selectedLabel: "all",
+    pageNumber: 1,
 }
 export const authSlice = createSlice({
     name: 'auth',
@@ -42,8 +43,20 @@ export const authSlice = createSlice({
         },
         setSelectedLabel: (state, action) => {
             state.selectedLabel = action.payload;
-          },
+        },
+        setPageNumber: (state, action) => {
+            state.pageNumber = action.payload;
+        }
     }
 })
-export const { setLogin, setLogout, setImage, setImages, setDelete, setTags, setSelectedLabel } = authSlice.actions;
+export const {
+    setLogin,
+    setLogout,
+    setImage,
+    setImages,
+    setDelete,
+    setTags,
+    setSelectedLabel,
+    setPageNumber
+} = authSlice.actions;
 export default authSlice;

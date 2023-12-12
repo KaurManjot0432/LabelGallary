@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import config from '../../config';
 import { useSelector } from 'react-redux';
-import { setTags, setImages } from '../../state';
+import { setTags, setImages, setPageNumber } from '../../state';
 import { useDispatch } from 'react-redux';
 import Pagination from '@material-ui/lab/Pagination';
 import Box from '@mui/material/Box';
@@ -36,6 +36,9 @@ interface Image {
   labels: string[];
 }
 
+interface PageNumber {
+  pageNumber: number;
+}
 
 const ImagesList: React.FC = () => {
   const itemsPerPage = 8;
@@ -43,9 +46,9 @@ const ImagesList: React.FC = () => {
   const token = useSelector((state: Token) => state?.token);
   const tags = useSelector((state: Tags) => state?.tags);
   const images = useSelector((state: Images) => state?.images);
+  const currentPage = useSelector((state: PageNumber) => state?.pageNumber);
   const selectedLabel = useSelector((state: SelectedLabel) => state.selectedLabel);
   const [imagesTotalCount, setImagesTotalCount] = useState<number>(0);
-  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const fetchLabels = async () => {
     try {
@@ -82,8 +85,18 @@ const ImagesList: React.FC = () => {
   };
 
   const handlePageChange = (event: React.ChangeEvent<unknown>, page: number) => {
-    setCurrentPage(page);
+    dispatch(setPageNumber(page));
     fetchImages();
+  };
+
+  // Callback function to update labels in the parent component
+  const handleLabelAddition = (imageId: string, addedLabel: string) => {
+    const updatedImages = images.map((image) =>
+      image.id === imageId
+        ? { ...image, labels: [...image.labels, addedLabel] }
+        : image
+    );
+    dispatch(setImages({ images: updatedImages }));
   };
 
   useEffect(() => {
@@ -92,10 +105,14 @@ const ImagesList: React.FC = () => {
   }, [selectedLabel, currentPage]);
 
   return (
-    <Box sx={{ width: 1, p: 2, overflowY: 'scroll' }}>
+    <Box sx={{ width: 1, p: 2, overflowY: 'scroll', textAlign: 'center' }}>
       <ImageList variant="masonry" cols={3} gap={8}>
         {images && images.map((image) => (
-          <ImagesListItem image={image} />
+          <ImagesListItem
+            key={image.presigned_url}
+            image={image}
+            onLabelAddition={handleLabelAddition}
+          />
         ))}
       </ImageList>
       <Pagination
@@ -103,7 +120,7 @@ const ImagesList: React.FC = () => {
         page={currentPage}
         onChange={handlePageChange}
         color="primary"
-        style={{ marginTop: '16px' }}
+        style={{ marginTop: '16px', display: 'flex', justifyContent: 'center' }}
       />
     </Box>
   );

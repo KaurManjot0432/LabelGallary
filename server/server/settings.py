@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'LabelGallary',
         'CLIENT' : {
-            'host':'mongodb://127.0.0.1:27017',
+            'host':os.environ.get('MONGODB_URI'),
             'port':27017,
         }
     }

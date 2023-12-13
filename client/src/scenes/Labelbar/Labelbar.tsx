@@ -19,6 +19,7 @@ const LabelBar: React.FC = () => {
     const [value, setValue] = React.useState("");
 
     const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+        if(newValue == "Mixed") newValue = 'all';
         setValue(newValue);
         console.log(`Selected Label: ${newValue}`);
         dispatch(setSelectedLabel(newValue));

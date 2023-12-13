@@ -12,6 +12,8 @@ import {
   MDBBtn
 }
   from 'mdb-react-ui-kit';
+import GoogleLoginButton from './GoogleLoginButton';
+
 
 function Login() {
   const [errormsg, setErrormsg] = useState<string | null>('');
@@ -61,8 +63,8 @@ function Login() {
           user: loggedInUser.user,
           token: loggedInUser.access
         }
-      ))
-      navigate('/home')
+      ));
+      navigate('/home');
     } else {
       console.log(loggedInUser.error);
       setErrormsg(loggedInUser.error)
@@ -75,6 +77,9 @@ function Login() {
   return (
     <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
       <MDBTabsContent>
+        <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          Welcome Back!
+        </h2>
         <Formik initialValues={initialLoginValues}
           validationSchema={userLoginSchema}
           onSubmit={handleLoginClick}>
@@ -85,8 +90,6 @@ function Login() {
             handleSubmit,
             handleChange,
             handleBlur,
-            setFieldValue,
-            resetForm
           }) => (
 
             <form onSubmit={handleSubmit}>
@@ -118,12 +121,15 @@ function Login() {
             </form>
           )}
         </Formik>
-        <p className="text-center">
-          Not a member?{' '}
-          <Link to="/signup" style={{ color: 'blue' }}>
-            Register
-          </Link>
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <GoogleLoginButton />
+          <p>
+            Not a member?{' '}
+            <Link to="/signup" style={{ color: 'blue' }}>
+              Register
+            </Link>
+          </p>
+        </div>
       </MDBTabsContent>
     </MDBContainer>
   );

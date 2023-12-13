@@ -8,7 +8,7 @@ import Admin from './scenes/Admin/Admin'
 
 
 function App() {
-  const isAuth=Boolean(useSelector((state:any)=>state?.token));
+  const isAuth=Boolean(useSelector((state:any)=>state?.user));
   const user = useSelector((state:any)=>state?.user)
   return (
     <div>

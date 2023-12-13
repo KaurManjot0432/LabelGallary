@@ -4,12 +4,14 @@ import config from '../../config';
 import * as yup from 'yup'
 import { Box, TextField } from '@mui/material'
 import { Formik } from 'formik';
+import { Link } from 'react-router-dom';
 import {
     MDBContainer,
     MDBTabsContent,
     MDBBtn,
 }
     from 'mdb-react-ui-kit';
+import GoogleLoginButton from './GoogleLoginButton';
 
 function Signup() {
     const [registeredmsg, setRegisteredmsg] = useState<string | null>(null);
@@ -81,6 +83,9 @@ function Signup() {
     return (
         <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
             <MDBTabsContent>
+                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                    Welcome Back!
+                </h2>
                 <Formik initialValues={initialSignupValues} validationSchema={userSignupSchema} onSubmit={handleRegisterClick}>{({
                     values,
                     errors,
@@ -135,6 +140,15 @@ function Signup() {
                 )
                 }
                 </Formik>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <GoogleLoginButton />
+                    <p>
+                        Already a member?{' '}
+                        <Link to="/" style={{ color: 'blue' }}>
+                            Login
+                        </Link>
+                    </p>
+                </div>
             </MDBTabsContent>
         </MDBContainer>
     );

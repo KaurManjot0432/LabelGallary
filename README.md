@@ -45,7 +45,10 @@ In addition to its functional features, Label Gallary prioritizes non-functional
 Here are some screenshots showcasing the platform:
 
 - **Screenshot 1**: 
-![Alt text](/screenshots/ss1.png?raw=true "Optional Title")
+![Alt text](/screenshots/lb1.png?raw=true "Optional Title")
+![Alt text](/screenshots/lb2.png?raw=true "Optional Title")
+![Alt text](/screenshots/lb3.png?raw=true "Optional Title")
+![Alt text](/screenshots/lb4.png?raw=true "Optional Title")
 
 ## Getting Started
 
